@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Belize Audio Archive</title>
 
-  <!-- Google Fonts: Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
@@ -20,13 +19,12 @@
       --accent-logging: #d35400;
       --accent-oral: #27ae60;
       --border-color: #e9ecef;
+      --error-color: #dc3545;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -35,10 +33,12 @@
       padding: 2rem 1rem;
     }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .audio-card, .filter-btn, .footer-btn { transition: none !important; }
     }
+
+    .container { max-width: 800px; margin: 0 auto; }
 
     header {
       margin-bottom: 2rem;
@@ -46,22 +46,14 @@
       padding-bottom: 1rem;
     }
 
-    header h1,
-    .card-title {
-      font-family: 'Poppins', sans-serif;
-    }
-
-    header h1 {
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-    }
-
+    header h1, .card-title { font-family: 'Poppins', sans-serif; }
+    header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
     header p {
       color: var(--text-muted);
       font-size: 0.95rem;
+      line-height: 1.5;
     }
 
-    /* Filter Controls */
     .filter-bar {
       display: flex;
       gap: 0.5rem;
@@ -80,14 +72,20 @@
       font-weight: 500;
     }
 
-    .filter-btn:hover,
+    .filter-btn:hover { background: #e9ecef; }
     .filter-btn.active {
       background: var(--text-main);
       color: #ffffff;
       border-color: var(--text-main);
     }
 
-    /* Audio Cards List */
+    .filter-btn:focus,
+    .play-btn:focus,
+    .footer-btn:focus {
+      outline: 2px solid var(--accent-music);
+      outline-offset: 2px;
+    }
+
     .audio-list {
       display: flex;
       flex-direction: column;
@@ -100,24 +98,26 @@
       border-radius: 8px;
       padding: 1.5rem;
       box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .audio-card.hidden {
-      display: none;
-    }
+    .audio-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.08); }
+    .audio-card.hidden { display: none; }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 0.75rem;
       gap: 1rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
     }
 
     .card-title {
       font-size: 1.2rem;
       font-weight: 600;
+      flex: 1;
+      min-width: 200px;
     }
 
     .tags-wrapper {
@@ -134,23 +134,12 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
-    .tag-music {
-      background-color: #e8f4f8;
-      color: var(--accent-music);
-    }
-
-    .tag-logging {
-      background-color: #fef5e7;
-      color: var(--accent-logging);
-    }
-
-    .tag-oral-history {
-      background-color: #e8f8f0;
-      color: var(--accent-oral);
-    }
-
+    .tag-music { background-color: #e8f4f8; color: var(--accent-music); }
+    .tag-logging { background-color: #fef5e7; color: var(--accent-logging); }
+    .tag-oral-history { background-color: #e8f8f0; color: var(--accent-oral); }
     .tag-location {
       background-color: #f1f3f5;
       color: #495057;
@@ -164,12 +153,25 @@
       line-height: 1.4;
     }
 
-    /* WaveSurfer Container */
     .waveform-wrapper {
       background: #f8f9fa;
       border-radius: 6px;
       padding: 0.75rem;
       margin-bottom: 1rem;
+      position: relative;
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .waveform-loading {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-style: italic;
     }
 
     .waveform-player {
@@ -181,6 +183,7 @@
       display: flex;
       align-items: center;
       gap: 1rem;
+      flex-wrap: wrap;
     }
 
     .play-btn {
@@ -192,10 +195,22 @@
       cursor: pointer;
       font-size: 0.85rem;
       font-weight: 600;
+      transition: all 0.2s ease;
     }
 
-    .play-btn:hover {
+    .play-btn:hover:not(:disabled) {
       opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .play-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .time-display {
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
     .meta-info {
@@ -204,7 +219,6 @@
       font-style: italic;
     }
 
-    /* Footer Base Navigation & Buttons */
     footer {
       margin-top: 3rem;
       padding-top: 1.5rem;
@@ -227,202 +241,85 @@
       font-weight: 500;
       transition: all 0.2s ease;
       text-align: center;
+      border: none;
     }
 
-    .footer-btn:hover {
-      background-color: #1a252f;
-      opacity: 0.95;
-    }
-
+    .footer-btn:hover { background-color: #1a252f; opacity: 0.95; }
     .footer-btn.secondary {
       background-color: #ffffff;
       color: var(--text-main);
       border: 1px solid var(--text-main);
     }
+    .footer-btn.secondary:hover { background-color: var(--bg-color); }
 
-    .footer-btn.secondary:hover {
-      background-color: var(--bg-color);
+    @media (max-width: 600px) {
+      body { padding: 1rem 0.5rem; }
+      header h1 { font-size: 1.5rem; }
+      .card-header { flex-direction: column; }
+      .tags-wrapper { justify-content: flex-start; }
+      .card-title { min-width: 100%; }
+      .filter-bar { gap: 0.35rem; }
+      .filter-btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+      .card-controls { flex-direction: column; align-items: flex-start; }
+      footer { flex-direction: column; }
+      .footer-btn { width: 100%; }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1e1e1e;
+        --card-bg: #2d2d2d;
+        --text-main: #e0e0e0;
+        --text-muted: #a0a0a0;
+        --border-color: #3a3a3a;
+      }
+
+      .filter-btn {
+        background: #2d2d2d;
+        border-color: #3a3a3a;
+        color: #e0e0e0;
+      }
+
+      .waveform-wrapper { background: #3a3a3a; }
+      .tag-location {
+        background-color: #3a3a3a;
+        border-color: #4a4a4a;
+      }
+      .footer-btn.secondary {
+        background-color: #2d2d2d;
+        border-color: #4a4a4a;
+      }
     }
   </style>
 </head>
 <body>
-
   <div class="container">
     <header>
       <h1>Belize Audio Collection</h1>
       <p>An interactive sound repository featuring historical recordings from music education, logging camps, and oral histories in Belize.</p>
     </header>
 
-    <!-- Category Filters -->
-    <div class="filter-bar">
-      <button class="filter-btn active" onclick="filterCategory('all')">All Recordings</button>
-      <button class="filter-btn" onclick="filterCategory('music')">Ms. Floss's Music School</button>
-      <button class="filter-btn" onclick="filterCategory('logging')">Logging Camps</button>
-      <button class="filter-btn" onclick="filterCategory('oral-history')">Oral Histories</button>
+    <div class="filter-bar" role="tablist" aria-label="Filter audio clips by category">
+      <button class="filter-btn active" data-category="all" role="tab" aria-selected="true">All Recordings</button>
+      <button class="filter-btn" data-category="music" role="tab" aria-selected="false">Ms. Floss's Music School</button>
+      <button class="filter-btn" data-category="logging" role="tab" aria-selected="false">Logging Camps</button>
+      <button class="filter-btn" data-category="oral-history" role="tab" aria-selected="false">Oral Histories</button>
     </div>
 
-    <!-- Audio Cards List -->
-    <div class="audio-list" id="audio-list"></div>
+    <div class="audio-list" id="audio-list" role="main" aria-label="Audio clips"></div>
 
-    <!-- Page Footer / Base Links -->
     <footer>
       <a href="mailto:alinaiscott@gmail.com" class="footer-btn">Submit an oral history</a>
       <a href="resources.html" class="footer-btn secondary">Explore Additional Belize Historical Resources</a>
     </footer>
   </div>
 
-  <!-- WaveSurfer.js CDN -->
-  <script src="https://unpkg.com/wavesurfer.js@7"></script>
-
+  <script src="data.js"></script>
+  <script src="https://unpkg.com/wavesurfer.js@7" onerror="console.error('WaveSurfer library failed to load');"></script>
+  <script src="app.js"></script>
   <script>
-    // Updated Metadata Array matching exact .mp3 filenames (including spacing)
-    const audioData = [
-      {
-        id: "clip-1",
-        title: "Wood Cutters Radio Belize Introduction",
-        category: "logging",
-        categoryLabel: "Logging Camps",
-        locations: ["Belize"],
-        description: "Introductory recording detailing Radio Belize context and wood cutters' historical traditions.",
-        featuredPerson: "",
-        audioUrl: "audio/Wood cutters Radio Belize Introduction .mp3"
-      },
-      {
-        id: "clip-2",
-        title: "Wood Cutters Song 1: Bulldog Nuh Bite Mi",
-        category: "logging",
-        categoryLabel: "Logging Camps",
-        locations: ["Belize"],
-        description: "Traditional mahogany cutters' labor song recorded in Belize logging settlements.",
-        featuredPerson: "",
-        audioUrl: "audio/Wood cutters song 1 Bulldog nuh Bite Mi.mp3"
-      },
-      {
-        id: "clip-3",
-        title: "Wood Cutters Song 2",
-        category: "logging",
-        categoryLabel: "Logging Camps",
-        locations: ["Belize"],
-        description: "Work song from the Belize timber harvesting camps.",
-        featuredPerson: "",
-        audioUrl: "audio/Wood cutters song 2 .mp3"
-      },
-      {
-        id: "clip-4",
-        title: "Wood Cutters Song 3",
-        category: "logging",
-        categoryLabel: "Logging Camps",
-        locations: ["Belize"],
-        description: "Work song performance from the Belize logging camps.",
-        featuredPerson: "",
-        audioUrl: "audio/Wood cutters song 3.mp3"
-      },
-      {
-        id: "clip-5",
-        title: "Wood Cutters Song 4",
-        category: "logging",
-        categoryLabel: "Logging Camps",
-        locations: ["Belize"],
-        description: "Work song performance from the Belize logging camps.",
-        featuredPerson: "",
-        audioUrl: "audio/Wood cutters song 4.mp3"
-      },
-      {
-        id: "clip-6",
-        title: "Freetown Gyal Sample",
-        category: "music",
-        categoryLabel: "Ms. Floss's Music School",
-        locations: ["Belize"],
-        description: "Sample performance of 'Freetown Gyal' by students of Ms. Floss's school.",
-        featuredPerson: "Ms. Floss",
-        audioUrl: "audio/Miss Floss' Freetown Gyal Sample.mp3"
-      },
-      {
-        id: "clip-7",
-        title: "Folk Songs by Miss Floss' School",
-        category: "music",
-        categoryLabel: "Ms. Floss's Music School",
-        locations: ["Belize"],
-        description: "Collection of traditional Belizean folk songs performed by students of Ms. Floss's Music School.",
-        featuredPerson: "Ms. Floss",
-        audioUrl: "audio/Folk Songs by Miss Floss' School.mp3"
-      }
-    ];
-
-    const audioContainer = document.getElementById('audio-list');
-    const wavesurferInstances = {};
-
-    function renderCards() {
-      audioData.forEach(item => {
-        const card = document.createElement('div');
-        card.className = `audio-card category-${item.category}`;
-        card.id = `card-${item.id}`;
-        card.setAttribute('data-category', item.category);
-
-        const locationTagsHTML = item.locations.map(loc => `<span class="tag tag-location">${loc}</span>`).join('');
-
-        card.innerHTML = `
-          <div class="card-header">
-            <h2 class="card-title">${item.title}</h2>
-            <div class="tags-wrapper">
-              <span class="tag tag-${item.category}">${item.categoryLabel}</span>
-              ${locationTagsHTML}
-            </div>
-          </div>
-          <p class="card-description">${item.description}</p>
-          <div class="waveform-wrapper">
-            <div id="waveform-${item.id}" class="waveform-player"></div>
-          </div>
-          <div class="card-controls">
-            <button class="play-btn" id="btn-${item.id}" onclick="togglePlay('${item.id}')">Play</button>
-            ${item.featuredPerson ? `<span class="meta-info">${item.featuredPerson}</span>` : ''}
-          </div>
-        `;
-
-        audioContainer.appendChild(card);
-
-        // Initialize WaveSurfer
-        const ws = WaveSurfer.create({
-          container: `#waveform-${item.id}`,
-          waveColor: '#ced4da',
-          progressColor: item.category === 'music' ? '#2980b9' : (item.category === 'logging' ? '#d35400' : '#27ae60'),
-          height: 45,
-          barWidth: 2,
-          barGap: 2,
-          url: item.audioUrl,
-        });
-
-        ws.on('play', () => document.getElementById(`btn-${item.id}`).textContent = 'Pause');
-        ws.on('pause', () => document.getElementById(`btn-${item.id}`).textContent = 'Play');
-        ws.on('finish', () => document.getElementById(`btn-${item.id}`).textContent = 'Play');
-
-        wavesurferInstances[item.id] = ws;
-      });
-    }
-
-    function togglePlay(id) {
-      Object.keys(wavesurferInstances).forEach(key => {
-        if (key !== id) {
-          wavesurferInstances[key].pause();
-        }
-      });
-      wavesurferInstances[id].playPause();
-    }
-
-    function filterCategory(category) {
-      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-
-      document.querySelectorAll('.audio-card').forEach(card => {
-        if (category === 'all' || card.getAttribute('data-category') === category) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-    }
-
-    window.addEventListener('DOMContentLoaded', renderCards);
+    console.log('Belize Audio Archive loaded');
+    console.log('Open browser console to inspect load errors');
   </script>
 </body>
 </html>
