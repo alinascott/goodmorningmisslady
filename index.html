@@ -293,6 +293,20 @@
   </style>
 </head>
 <body>
+  <script>
+(function(){
+  var bar = document.createElement('div');
+  bar.innerHTML = '<a href="https://alinascott.github.io/portfolio/" style="color:inherit;text-decoration:none;">← Alina Scott, PhD — Portfolio</a>';
+  bar.style.cssText = [
+    'position:sticky', 'top:0', 'z-index:9999',
+    'background:#1A1D20', 'color:#FAF9F6',
+    'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif',
+    'font-size:13px', 'font-weight:600', 'padding:8px 16px',
+    'box-shadow:0 2px 6px rgba(0,0,0,.15)'
+  ].join(';');
+  document.body.insertBefore(bar, document.body.firstChild);
+})();
+</script>
   <div class="container">
     <header>
       <h1>Miss Floss and the Loggers: A Belizean Microhistory</h1>
