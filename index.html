@@ -295,6 +295,7 @@
 <body>
   <script>
 (function(){
+    if (window.self !== window.top) return;
   var bar = document.createElement('div');
   bar.innerHTML = '<a href="https://alinascott.github.io/portfolio/" style="color:inherit;text-decoration:none;">← Alina Scott, PhD — Portfolio</a>';
   bar.style.cssText = [
